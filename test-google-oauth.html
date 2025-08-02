@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google OAuth Test</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <h1>Google OAuth Test</h1>
+    <div id="g_id_onload"
+         data-client_id="116757397651-85bl5679m9egc3v22hm2qtkjj7m3bumg.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+    
+    <script>
+        function handleCredentialResponse(response) {
+            console.log('Google OAuth Response:', response);
+            console.log('Credential:', response.credential);
+            
+            // Decode the JWT token to see the payload
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            console.log('Decoded payload:', payload);
+            
+            // Test the access token flow
+            testAccessToken();
+        }
+        
+        function testAccessToken() {
+            console.log('Testing access token flow...');
+            
+            const client = google.accounts.oauth2.initTokenClient({
+                client_id: '116757397651-85bl5679m9egc3v22hm2qtkjj7m3bumg.apps.googleusercontent.com',
+                scope: 'email profile',
+                callback: (response) => {
+                    console.log('Access token response:', response);
+                    if (response.access_token) {
+                        console.log('Access token received, length:', response.access_token.length);
+                        testTokenWithAPI(response.access_token);
+                    } else {
+                        console.error('No access token received:', response.error);
+                    }
+                },
+            });
+            
+            client.requestAccessToken();
+        }
+        
+        function testTokenWithAPI(accessToken) {
+            console.log('Testing token with API...');
+            
+            fetch('/api/auth/google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    accessToken: accessToken, 
+                    role: 'STUDENT' 
+                }),
+            })
+            .then(response => {
+                console.log('API Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('API Response data:', data);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+        }
+    </script>
+</body>
+</html> 
