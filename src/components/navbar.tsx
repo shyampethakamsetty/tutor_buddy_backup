@@ -25,6 +25,7 @@ import { useAuthPopup } from '@/hooks/useAuthPopup'
 import { useAuth } from '@/contexts/AuthContext'
 import { usePathname } from 'next/navigation'
 import { useSidebar } from '@/contexts/SidebarContext'
+import { UserNav } from '@/components/user-nav'
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -143,7 +144,7 @@ export default function Navbar() {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            {!isAuthenticated && (
+            {!isAuthenticated ? (
             <div className="flex space-x-2">
               <Button 
                 variant="outline" 
@@ -163,6 +164,8 @@ export default function Navbar() {
                 Sign In
               </Button>
             </div>
+            ) : (
+              <UserNav user={user} />
             )}
           </div>
 
@@ -238,7 +241,7 @@ export default function Navbar() {
 
               {/* Auth Links */}
               <div className="space-y-1 pt-4 border-t">
-                {!isAuthenticated && (
+                {!isAuthenticated ? (
                   <>
                 <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Get Started
@@ -262,6 +265,43 @@ export default function Navbar() {
                 >
                   <GraduationCap className="h-4 w-4" />
                   <span>Sign In</span>
+                </button>
+                  </>
+                ) : (
+                  <>
+                <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Account
+                </h3>
+                <div className="flex items-center space-x-2 px-3 py-2">
+                  <Avatar className="h-6 w-6">
+                    <AvatarFallback>{user?.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">{user?.name}</span>
+                    <span className="text-xs text-muted-foreground">{user?.email}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    // Navigate to profile page based on role
+                    const profilePath = user?.role === 'TUTOR' ? '/tutor/profile' : '/student/profile';
+                    window.location.href = profilePath;
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors w-full text-left"
+                >
+                  <User className="h-4 w-4" />
+                  <span>Profile</span>
+                </button>
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors w-full text-left"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Log out</span>
                 </button>
                   </>
                 )}

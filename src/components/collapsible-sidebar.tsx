@@ -69,6 +69,7 @@ export default function CollapsibleSidebar({ children }: CollapsibleSidebarProps
     if (user.role === 'STUDENT') {
       return [
         { name: 'Dashboard', href: '/student/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
+        { name: 'Profile', href: '/student/profile', icon: <User className="h-5 w-5" /> },
         { name: 'Find Tutors', href: '/student/tutors', icon: <Users className="h-5 w-5" /> },
         { name: 'My Bookings', href: '/student/bookings', icon: <Calendar className="h-5 w-5" /> },
         { name: 'Messages', href: '/student/messages', icon: <MessageSquare className="h-5 w-5" /> },

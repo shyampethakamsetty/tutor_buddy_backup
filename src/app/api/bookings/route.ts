@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { authenticateUser } from '@/lib/auth';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
   try {
@@ -83,12 +81,21 @@ export async function POST(req: NextRequest) {
     console.log('✅ Debug: Found tutor:', tutor.userId);
 
     // Validate booking time against tutor's availability
+    // Convert UTC time back to the original local time that was selected
     const bookingDate = new Date(startTime);
-    const dayOfWeek = bookingDate.getDay();
-    const bookingStartTime = `${bookingDate.getHours().toString().padStart(2, '0')}:${bookingDate.getMinutes().toString().padStart(2, '0')}`;
+    
+    // Since the frontend sends UTC time, we need to convert it back to the original local time
+    // The frontend originally selected a local time, then converted to UTC for transmission
+    // We need to reverse this process to get the original local time
+    const localBookingDate = new Date(bookingDate.getTime() + (bookingDate.getTimezoneOffset() * 60000));
+    const dayOfWeek = localBookingDate.getDay();
+    const bookingStartTime = `${localBookingDate.getHours().toString().padStart(2, '0')}:${localBookingDate.getMinutes().toString().padStart(2, '0')}`;
     
     console.log('🔍 Debug: Booking details:', {
+      originalStartTime: startTime,
       bookingDate: bookingDate.toISOString(),
+      bookingDateLocal: bookingDate.toLocaleString(),
+      localBookingDate: localBookingDate.toLocaleString(),
       dayOfWeek,
       bookingStartTime,
       tutorAvailability: tutor.availability
@@ -126,7 +133,10 @@ export async function POST(req: NextRequest) {
               slotEnd = slot.endTime || slot.end;
             }
             
-            return slotStart <= bookingStartTime && slotEnd > bookingStartTime;
+            const isInSlot = slotStart <= bookingStartTime && slotEnd > bookingStartTime;
+            console.log(`🔍 Debug: Checking slot ${slotStart}-${slotEnd} against ${bookingStartTime}: ${isInSlot}`);
+            
+            return isInSlot;
           });
         }
       }
@@ -192,7 +202,25 @@ export async function POST(req: NextRequest) {
       
       if (availableSlots.length > 0) {
         const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        errorMessage += ` Available slots for ${dayNames[dayOfWeek]}: ${availableSlots.join(', ')}`;
+        // Convert 24-hour format to 12-hour format for consistency with frontend
+        const formattedSlots = availableSlots.map(slot => {
+          const [startTime, endTime] = slot.split('-');
+          const [startHour, startMinute] = startTime.split(':');
+          const [endHour, endMinute] = endTime.split(':');
+          
+          const startHourNum = parseInt(startHour);
+          const endHourNum = parseInt(endHour);
+          
+          const startAmpm = startHourNum >= 12 ? 'PM' : 'AM';
+          const endAmpm = endHourNum >= 12 ? 'PM' : 'AM';
+          
+          const startDisplayHour = startHourNum === 0 ? 12 : startHourNum > 12 ? startHourNum - 12 : startHourNum;
+          const endDisplayHour = endHourNum === 0 ? 12 : endHourNum > 12 ? endHourNum - 12 : endHourNum;
+          
+          return `${startDisplayHour}:${startMinute} ${startAmpm} - ${endDisplayHour}:${endMinute} ${endAmpm}`;
+        });
+        
+        errorMessage += ` Available slots for ${dayNames[dayOfWeek]}: ${formattedSlots.join(', ')}`;
       } else {
         errorMessage += ` Please select a different day. Tutor is available on: ${availableDays.join(', ')}`;
       }

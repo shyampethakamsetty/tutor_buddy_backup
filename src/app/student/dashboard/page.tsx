@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Calendar, Clock, BookOpen, TrendingUp, Star, Video, MessageSquare } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatDate } from '@/lib/utils'
+import { FullPageSpinner } from '@/components/ui/spinner'
 
 interface Booking {
   id: string
@@ -143,23 +144,7 @@ export default function StudentDashboard() {
   }
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-1/4 mb-8"></div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-muted rounded-lg"></div>
-            ))}
-          </div>
-          <div className="grid gap-8 lg:grid-cols-2">
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="h-64 bg-muted rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
+    return <FullPageSpinner text="Loading dashboard..." />;
   }
 
   return (

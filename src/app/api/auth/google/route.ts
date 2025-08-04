@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 interface GoogleUserInfo {
   id: string;
@@ -61,6 +59,14 @@ async function verifyGoogleToken(accessToken: string): Promise<GoogleUserInfo> {
 async function findOrCreateUser(userInfo: GoogleUserInfo, role: string = 'STUDENT') {
   try {
     console.log('Database: Looking for existing user with email:', userInfo.email);
+    
+    // Test database connectivity first
+    try {
+      await prisma.$connect();
+    } catch (dbError) {
+      console.error('Database connection failed:', dbError);
+      throw new Error('Database is currently unavailable. Please try again in a few minutes.');
+    }
     
     // Check if user exists by email
     const existingUser = await prisma.user.findUnique({

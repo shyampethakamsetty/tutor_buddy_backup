@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Calendar, Clock, Video, MessageSquare, Star, MapPin } from 'lucide-react'
+import { Calendar, Clock, Video, MessageSquare, Star, MapPin, User } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+import { FullPageSpinner, BookingSkeleton } from '@/components/ui/spinner'
 
 interface Booking {
   id: string
   tutorName: string
+  tutorId: string
   subject: string
   date: string
   time: string
@@ -89,24 +91,24 @@ export default function StudentBookingsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-          <div className="animate-pulse">
-          {/* Header skeleton */}
-            <div className="h-8 bg-muted rounded w-1/4 mb-8"></div>
+        {/* Header skeleton */}
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded w-1/4 mb-8"></div>
           <div className="h-4 bg-muted rounded w-1/2 mb-8"></div>
-          
-          {/* Filters skeleton */}
-          <div className="flex gap-2 mb-8">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-8 bg-muted rounded w-20"></div>
-            ))}
-          </div>
-          
-          {/* Bookings skeleton */}
-          <div className="space-y-6">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-32 bg-muted rounded-lg"></div>
-              ))}
-          </div>
+        </div>
+        
+        {/* Filters skeleton */}
+        <div className="flex gap-2 mb-8">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-8 bg-muted rounded w-20"></div>
+          ))}
+        </div>
+        
+        {/* Bookings skeleton */}
+        <div className="space-y-6">
+          {[...Array(4)].map((_, i) => (
+            <BookingSkeleton key={i} />
+          ))}
         </div>
       </div>
     )
@@ -190,6 +192,16 @@ export default function StudentBookingsPage() {
                     </div>
                   </div>
                   <div className="flex flex-col space-y-2">
+                    {/* View Profile Button - Always visible */}
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.location.href = `/student/tutors/${booking.tutorId}`}
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      View Profile
+                    </Button>
+                    
                     {booking.status === 'upcoming' && (
                       <>
                         <Button size="sm">

@@ -9,10 +9,10 @@ interface SelectProps {
   label?: string;
   value: string;
   onChange: (v: string) => void;
-  options: Option[];
+  options?: Option[];
 }
 
-export const Select = ({ label, value, onChange, options }: SelectProps) => (
+export const Select = ({ label, value, onChange, options = [] }: SelectProps) => (
   <div className="flex flex-col gap-1">
     {label && <label className="text-sm font-medium mb-1">{label}</label>}
     <select
@@ -20,9 +20,9 @@ export const Select = ({ label, value, onChange, options }: SelectProps) => (
       value={value}
       onChange={e => onChange(e.target.value)}
     >
-      {options.map(opt => (
+      {options?.map(opt => (
         <option key={opt.value} value={opt.value}>{opt.label}</option>
-      ))}
+      )) || []}
     </select>
   </div>
 ); 

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
+import { FullPageSpinner } from '@/components/ui/spinner';
 
 interface TutorProfile {
   id: string;
@@ -124,26 +125,12 @@ export default function TutorDetailPage() {
     const slots: string[] = [];
     dayAvailability.forEach((availability, index) => {
       console.log(`🔍 Frontend Debug: Processing slot ${index}:`, availability);
-      const [startHour, startMinute] = availability.startTime.split(':');
-      const [endHour, endMinute] = availability.endTime.split(':');
       
-      console.log(`🔍 Frontend Debug: Time range: ${startHour}:${startMinute} to ${endHour}:${endMinute}`);
-      
-      // Create time strings directly without Date conversion to avoid timezone issues
-      let currentHour = parseInt(startHour);
-      let currentMinute = parseInt(startMinute);
-      const endHourInt = parseInt(endHour);
-      const endMinuteInt = parseInt(endMinute);
-      
-      while (currentHour < endHourInt || (currentHour === endHourInt && currentMinute < endMinuteInt)) {
-        const timeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
-        console.log(`🔍 Frontend Debug: Adding slot: ${timeString}`);
-        slots.push(timeString);
-        
-        // Move to next hour
-        currentHour += 1;
-        currentMinute = 0;
-      }
+      // For each availability slot, just return the start time
+      // The slots are already defined as 1-hour intervals in the data
+      const timeString = availability.startTime;
+      console.log(`🔍 Frontend Debug: Adding slot: ${timeString}`);
+      slots.push(timeString);
     });
 
     console.log('🔍 Frontend Debug: Final generated slots:', slots);
@@ -160,6 +147,12 @@ export default function TutorDetailPage() {
     try {
       // Validate that the selected time is actually available
       const availableSlots = getAvailableTimeSlots(selectedDate);
+      console.log('🔍 Frontend Debug: Validation check:', {
+        selectedTime,
+        availableSlots,
+        includes: availableSlots.includes(selectedTime)
+      });
+      
       if (!availableSlots.includes(selectedTime)) {
         setBookingError(`Selected time ${selectedTime} is not available. Please select from: ${availableSlots.join(', ')}`);
         setIsBooking(false);
@@ -226,7 +219,7 @@ export default function TutorDetailPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <FullPageSpinner text="Loading tutor details..." />;
   }
 
   if (error || !tutor) {

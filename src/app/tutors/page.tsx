@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/Input'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Search, Star, Clock, MapPin } from 'lucide-react'
+import { FullPageSpinner } from '@/components/ui/spinner'
 
 interface Tutor {
   id: string
@@ -77,20 +78,7 @@ export default function TutorsPage() {
   })
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="animate-pulse">
-            <div className="h-8 bg-muted rounded w-1/4 mb-8"></div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-64 bg-muted rounded-lg"></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+    return <FullPageSpinner text="Loading tutors..." />;
   }
 
   return (

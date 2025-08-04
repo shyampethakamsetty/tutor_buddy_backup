@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { authenticateUser } from '@/lib/auth';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function GET(
   req: NextRequest,
@@ -66,10 +64,21 @@ export async function GET(
         if (dayData && dayData.available && dayData.slots && dayData.slots.length > 0) {
           // Create an entry for each slot
           dayData.slots.forEach((slot: any) => {
+            let startTime, endTime;
+            
+            if (typeof slot === 'string') {
+              // Handle string format like '16:00-17:00'
+              [startTime, endTime] = slot.split('-');
+            } else {
+              // Handle object format
+              startTime = slot.startTime || slot.start || '09:00';
+              endTime = slot.endTime || slot.end || '17:00';
+            }
+            
             availability.push({
               dayOfWeek: dayIndex,
-              startTime: slot.startTime || slot.start || '09:00',
-              endTime: slot.endTime || slot.end || '17:00'
+              startTime,
+              endTime
             });
           });
         }

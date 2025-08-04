@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
-import { PrismaClient, User } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { User } from '@prisma/client';
+import { prisma } from './prisma';
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);

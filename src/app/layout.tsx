@@ -5,7 +5,6 @@ import { Providers } from '@/components/providers'
 import Chatbot from '@/components/Chatbot'
 import Navbar from '@/components/navbar'
 import { GlobalAuthPopup } from '@/components/GlobalAuthPopup'
-import CollapsibleSidebar from '@/components/collapsible-sidebar'
 import { SidebarProvider } from '@/contexts/SidebarContext'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -26,9 +25,7 @@ export default function RootLayout({
         <Providers>
           <SidebarProvider>
           <Navbar />
-            <CollapsibleSidebar>
           {children}
-            </CollapsibleSidebar>
           <Chatbot />
           <GlobalAuthPopup />
           </SidebarProvider>

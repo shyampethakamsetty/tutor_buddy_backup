@@ -42,17 +42,23 @@ export function UserNav({ user }: { user: any }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {
+            const profilePath = user?.role === 'TUTOR' ? '/tutor/profile' : '/student/profile';
+            window.location.href = profilePath;
+          }}>
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            {user?.role === 'tutor' ? 'My Students' : 'My Tutors'}
+          <DropdownMenuItem onClick={() => {
+            const dashboardPath = user?.role === 'TUTOR' ? '/tutor/dashboard' : '/student/dashboard';
+            window.location.href = dashboardPath;
+          }}>
+            Dashboard
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Schedule
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Settings
+          <DropdownMenuItem onClick={() => {
+            const bookingsPath = user?.role === 'TUTOR' ? '/tutor/bookings' : '/student/bookings';
+            window.location.href = bookingsPath;
+          }}>
+            {user?.role === 'TUTOR' ? 'My Bookings' : 'My Bookings'}
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
