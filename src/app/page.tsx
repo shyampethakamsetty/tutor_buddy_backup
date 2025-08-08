@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
@@ -16,6 +16,7 @@ import {
   CheckCircle, 
   ArrowRight, 
   Play,
+  Pause,
   GraduationCap,
   Target,
   Award,
@@ -48,6 +49,70 @@ import {
 import { LearningToolsProvider, ToolsLauncher } from '@/components/learning-tools';
 import { useAuthPopup } from '@/hooks/useAuthPopup';
 import { useAuth } from '@/contexts/AuthContext';
+
+// Custom Video Component with Controls
+function VideoWithControls({ src, className = "" }: { src: string; className?: string }) {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  return (
+    <div className="relative group">
+      <video
+        ref={videoRef}
+        autoPlay
+        loop
+        playsInline
+        className={className}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+      >
+        <source src={src} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      
+      {/* Video Controls Overlay */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="bg-black/50 backdrop-blur-sm rounded-full p-3 flex items-center space-x-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={togglePlay}
+            className="text-white hover:text-white hover:bg-white/20"
+          >
+            {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={toggleMute}
+            className="text-white hover:text-white hover:bg-white/20"
+          >
+            {isMuted ? <Mic className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const { openPopup } = useAuthPopup();
@@ -167,50 +232,71 @@ export default function Home() {
           <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
           <div className="relative px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
             <div className="mx-auto max-w-7xl">
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-6">
-                  <Badge variant="secondary" className="px-4 py-2 text-sm font-medium">
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    #1 AI-Powered Learning Platform
-                  </Badge>
-                </div>
-                
-                <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-                  Smart Teaching. Smarter Students
-                  <br />
-                  <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Fueling Futures with AI</span>
-                </h1>
-                
-                <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-                  Experience personalized learning with AI assistance. Choose from online classes or offline sessions 
-                  across Delhi. Expert tutors, smart recommendations, and voice support in Indian languages.
-                </p>
-                
-                <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Button size="lg" className="px-8 py-3 text-lg" onClick={() => openPopup('register', 'STUDENT')}>
-                    <UserCheck className="mr-2 h-5 w-5" />
-                    Register as Student
-                  </Button>
-                  <Button variant="outline" size="lg" className="px-8 py-3 text-lg" onClick={() => openPopup('register', 'TUTOR')}>
-                    <GraduationCap className="mr-2 h-5 w-5" />
-                    Register as Tutor
-                  </Button>
-                  <Button variant="outline" size="lg" className="px-8 py-3 text-lg" asChild>
-                    <Link href="/courses">
-                      <BookOpen className="mr-2 h-5 w-5" />
-                      Explore Courses
-                </Link>
-                  </Button>
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                {/* Content Side */}
+                <div className="text-center lg:text-left">
+                  <div className="flex items-center justify-center lg:justify-start mb-6">
+                    <Badge variant="secondary" className="px-4 py-2 text-sm font-medium">
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      #1 AI-Powered Learning Platform
+                    </Badge>
+                  </div>
+                  
+                  <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-5xl xl:text-6xl">
+                    Smart Teaching. Smarter Students
+                    <br />
+                    <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Fueling Futures with AI</span>
+                  </h1>
+                  
+                  <p className="mt-6 text-lg leading-8 text-muted-foreground lg:max-w-lg">
+                    Experience personalized learning with AI assistance. Choose from online classes or offline sessions 
+                    across Delhi. Expert tutors, smart recommendations, and voice support in Indian languages.
+                  </p>
+                  
+                  <div className="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                    <Button size="lg" className="px-8 py-3 text-lg" onClick={() => openPopup('register', 'STUDENT')}>
+                      <UserCheck className="mr-2 h-5 w-5" />
+                      Register as Student
+                    </Button>
+                    <Button variant="outline" size="lg" className="px-8 py-3 text-lg" onClick={() => openPopup('register', 'TUTOR')}>
+                      <GraduationCap className="mr-2 h-5 w-5" />
+                      Register as Tutor
+                    </Button>
+                    <Button variant="outline" size="lg" className="px-8 py-3 text-lg" asChild>
+                      <Link href="/courses">
+                        <BookOpen className="mr-2 h-5 w-5" />
+                        Explore Courses
+                      </Link>
+                    </Button>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="mt-16 grid grid-cols-2 gap-8 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+                    {stats.map((stat, index) => (
+                      <div key={index} className="text-center">
+                        <div className="text-3xl font-bold text-foreground">{stat.number}</div>
+                        <div className="text-sm text-muted-foreground">{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Stats */}
-                <div className="mt-16 grid grid-cols-2 gap-8 sm:grid-cols-4">
-                  {stats.map((stat, index) => (
-                    <div key={index} className="text-center">
-                      <div className="text-3xl font-bold text-foreground">{stat.number}</div>
-                      <div className="text-sm text-muted-foreground">{stat.label}</div>
-                    </div>
-                  ))}
+                                {/* Video Side */}
+                <div className="relative -mt-8">
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                    <VideoWithControls 
+                      src="/video/hero-video.mp4"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  {/* Floating elements around video */}
+                  <div className="absolute -top-4 -right-4 w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Brain className="w-8 h-8 text-primary" />
+                  </div>
+                  <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                    <GraduationCap className="w-6 h-6 text-secondary" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -490,6 +576,150 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Footer Section with Video */}
+        <footer className="bg-muted/30 py-16 px-6 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Footer Content */}
+              <div className="text-center lg:text-left">
+                <div className="flex items-center justify-center lg:justify-start mb-6">
+                  <Badge variant="secondary" className="px-4 py-2 text-sm font-medium">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Join Our Community
+                  </Badge>
+                </div>
+                
+                <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mb-6">
+                  Experience the Future of Learning
+                </h2>
+                
+                <p className="text-lg text-muted-foreground mb-8 max-w-lg">
+                  Watch how our AI-powered platform transforms education. See real students 
+                  learning with personalized assistance and smart recommendations.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <Button size="lg" className="px-8 py-3 text-lg" onClick={() => openPopup('register', 'STUDENT')}>
+                    <UserCheck className="mr-2 h-5 w-5" />
+                    Start Learning Today
+                  </Button>
+                  <Button variant="outline" size="lg" className="px-8 py-3 text-lg" asChild>
+                    <Link href="/contact">
+                      <MessageCircle className="mr-2 h-5 w-5" />
+                      Contact Us
+                    </Link>
+                  </Button>
+                </div>
+
+                {/* Footer Stats */}
+                <div className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-foreground">24/7</div>
+                    <div className="text-sm text-muted-foreground">AI Support</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-foreground">100+</div>
+                    <div className="text-sm text-muted-foreground">Delhi Locations</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-foreground">95%</div>
+                    <div className="text-sm text-muted-foreground">Success Rate</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-foreground">50K+</div>
+                    <div className="text-sm text-muted-foreground">Students</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer Videos */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* First Footer Video */}
+                <div className="relative">
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                    <VideoWithControls 
+                      src="/video/footer-video.mp4"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  {/* Floating elements around first footer video */}
+                  <div className="absolute -top-4 -right-4 w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Brain className="w-8 h-8 text-primary" />
+                  </div>
+                  <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                    <GraduationCap className="w-6 h-6 text-secondary" />
+                  </div>
+                </div>
+
+                {/* Second Footer Video */}
+                <div className="relative">
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                    <VideoWithControls 
+                      src="/video/footer-video2.mp4"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  {/* Floating elements around second footer video */}
+                  <div className="absolute -top-4 -right-4 w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Brain className="w-8 h-8 text-primary" />
+                  </div>
+                  <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                    <GraduationCap className="w-6 h-6 text-secondary" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Links */}
+            <div className="mt-16 pt-8 border-t border-border">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                  <h3 className="font-semibold mb-4">Platform</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li><Link href="/courses" className="hover:text-foreground transition-colors">Courses</Link></li>
+                    <li><Link href="/tutors" className="hover:text-foreground transition-colors">Find Tutors</Link></li>
+                    <li><Link href="/subjects" className="hover:text-foreground transition-colors">Subjects</Link></li>
+                    <li><Link href="/ai-teaching" className="hover:text-foreground transition-colors">AI Assistant</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-4">Support</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li><Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link></li>
+                    <li><Link href="/help" className="hover:text-foreground transition-colors">Help Center</Link></li>
+                    <li><Link href="/faq" className="hover:text-foreground transition-colors">FAQ</Link></li>
+                    <li><Link href="/feedback" className="hover:text-foreground transition-colors">Feedback</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-4">Company</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li><Link href="/about" className="hover:text-foreground transition-colors">About Us</Link></li>
+                    <li><Link href="/careers" className="hover:text-foreground transition-colors">Careers</Link></li>
+                    <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link></li>
+                    <li><Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-4">Connect</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li><Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
+                    <li><Link href="/newsletter" className="hover:text-foreground transition-colors">Newsletter</Link></li>
+                    <li><Link href="/social" className="hover:text-foreground transition-colors">Social Media</Link></li>
+                    <li><Link href="/partners" className="hover:text-foreground transition-colors">Partners</Link></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
+                <p>&copy; 2024 Tutor Buddy. All rights reserved. | Powered by AI for better learning.</p>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </LearningToolsProvider>
   )
