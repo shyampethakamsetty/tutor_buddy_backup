@@ -5,9 +5,16 @@ export async function postJSON<TReq, TRes>(url: string, body: TReq): Promise<TRe
     // Demo mode: auto-seed dummy responses
     return seedDemoResponse<TReq, TRes>(url, body);
   }
+  
+  // Get token from localStorage for authentication
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
@@ -23,8 +30,13 @@ export async function postForm<TRes>(url: string, form: FormData): Promise<TRes>
     // Demo mode: auto-seed dummy responses
     return seedDemoResponse<any, TRes>(url, Object.fromEntries(form.entries()));
   }
+  
+  // Get token from localStorage for authentication
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  
   const res = await fetch(url, {
     method: 'POST',
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
     body: form,
   });
   if (!res.ok) {
@@ -53,11 +65,6 @@ function seedDemoResponse<TReq, TRes>(url: string, body: TReq): TRes {
       return {
         deepLink: 'https://wa.me/1234567890?text=Demo',
         summary: 'Demo summary for WhatsApp doubt.',
-      } as any;
-    case '/api/homework-helper':
-      return {
-        concept: 'Demo concept explanation.',
-        guidanceSteps: ['Demo step 1', 'Demo step 2'],
       } as any;
     case '/api/micro-quiz':
       return {

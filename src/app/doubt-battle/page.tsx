@@ -1,5 +1,5 @@
 'use client';
-import { LearningToolsProvider, DoubtBattle, ToolsLauncher } from '@/components/learning-tools';
+import { LearningToolsProvider, DoubtBattle, ToolsLauncher, useLearningTools } from '@/components/learning-tools';
 import { Swords } from 'lucide-react';
 // import Lottie from 'lottie-react';
 // import battleAnimation from '@/public/animations/battle.json';
@@ -7,7 +7,16 @@ import { Swords } from 'lucide-react';
 export default function DoubtBattlePage() {
   return (
     <LearningToolsProvider questionRef="doubt-battle-page" initialText="">
-      <div className="relative min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-900 via-indigo-400/30 to-indigo-100 dark:from-gray-900 dark:to-indigo-900 overflow-hidden">
+      <DoubtBattlePageContent />
+    </LearningToolsProvider>
+  );
+}
+
+function DoubtBattlePageContent() {
+  const { openTool } = useLearningTools();
+  
+  return (
+      <div className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center bg-gradient-to-br from-indigo-900 via-indigo-400/30 to-indigo-100 dark:from-gray-900 dark:to-indigo-900 overflow-hidden">
         {/* Animated Background Shapes */}
         <div className="absolute inset-0 pointer-events-none z-0">
           <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-indigo-400/30 rounded-full blur-3xl animate-pulse" />
@@ -33,7 +42,12 @@ export default function DoubtBattlePage() {
             <li>Custom battles by subject <span className="ml-1">📚</span></li>
             <li>Fun, competitive, and social! <span className="ml-1">🎉</span></li>
           </ul>
-          <a href="#tool" className="mt-2 px-8 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white rounded-full font-bold shadow-lg hover:scale-105 hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 animate-shimmer">Start a Battle ⚔️</a>
+          <button 
+            onClick={() => openTool('doubtBattle')}
+            className="mt-2 px-8 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white rounded-full font-bold shadow-lg hover:scale-105 hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 animate-shimmer cursor-pointer"
+          >
+            Start a Battle ⚔️
+          </button>
         </div>
         {/* Tool Launcher + Tool */}
         <div id="tool" className="relative z-10 w-full flex flex-col items-center">
@@ -46,6 +60,5 @@ export default function DoubtBattlePage() {
           <div className="text-xs text-indigo-700 dark:text-indigo-200 font-bold mt-1">Battle Dragon</div>
         </div>
       </div>
-    </LearningToolsProvider>
-  );
+    );
 } 

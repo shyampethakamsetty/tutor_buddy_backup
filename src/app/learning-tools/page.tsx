@@ -104,7 +104,7 @@ export default function LearningTools() {
   return (
     <LearningToolsProvider questionRef="learning-tools-demo" initialText="">
       <ToolsLauncher />
-      <div className="min-h-screen bg-background p-6">
+      <div className="min-h-[calc(100vh-4rem)] bg-background p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">

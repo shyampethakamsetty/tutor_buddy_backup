@@ -46,7 +46,7 @@ import {
   Mail,
   MessageCircle
 } from 'lucide-react'
-import { LearningToolsProvider, ToolsLauncher } from '@/components/learning-tools';
+import { LearningToolsProvider, ToolsLauncher, AITutorChat, SnapSolve } from '@/components/learning-tools';
 import { useAuthPopup } from '@/hooks/useAuthPopup';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -721,6 +721,8 @@ export default function Home() {
           </div>
         </footer>
       </div>
+      <AITutorChat />
+      <SnapSolve />
     </LearningToolsProvider>
   )
 } 

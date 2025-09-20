@@ -7,7 +7,7 @@ import { MessageSquare } from 'lucide-react';
 export default function WhatsAppDoubtPage() {
   return (
     <LearningToolsProvider questionRef="whatsapp-doubt-page" initialText="">
-      <div className="relative min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-900 via-green-400/30 to-green-100 dark:from-gray-900 dark:to-green-900 overflow-hidden">
+      <div className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center bg-gradient-to-br from-green-900 via-green-400/30 to-green-100 dark:from-gray-900 dark:to-green-900 overflow-hidden">
         {/* Animated Background Shapes */}
         <div className="absolute inset-0 pointer-events-none z-0">
           <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-green-400/30 rounded-full blur-3xl animate-pulse" />

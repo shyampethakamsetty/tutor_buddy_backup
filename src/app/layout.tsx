@@ -25,7 +25,9 @@ export default function RootLayout({
         <Providers>
           <SidebarProvider>
           <Navbar />
-          {children}
+          <main className="pt-16">
+            {children}
+          </main>
           <Chatbot />
           <GlobalAuthPopup />
           </SidebarProvider>

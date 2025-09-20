@@ -1,13 +1,37 @@
 'use client';
 import { LearningToolsProvider, SnapSolve, ToolsLauncher } from '@/components/learning-tools';
+import { useLearningTools } from '@/components/learning-tools';
 import { Camera } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAuthPopup } from '@/hooks/useAuthPopup';
+import React from 'react';
 // import Lottie from 'lottie-react';
 // import snapAnimation from '@/public/animations/snap.json';
+
+function TryNowButton() {
+  const { openTool } = useLearningTools();
+  const { isAuthenticated } = useAuth();
+  const { openPopup } = useAuthPopup();
+  return (
+    <button
+      onClick={() => {
+        if (!isAuthenticated) {
+          openPopup('login');
+          return;
+        }
+        openTool('snapSolve');
+      }}
+      className="mt-2 px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full font-bold shadow-lg hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-200 animate-shimmer"
+    >
+      Try Now 🚀
+    </button>
+  );
+}
 
 export default function SnapSolvePage() {
   return (
     <LearningToolsProvider questionRef="snap-solve-page" initialText="">
-      <div className="relative min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 via-blue-400/30 to-blue-100 dark:from-gray-900 dark:to-blue-900 overflow-hidden">
+      <div className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 via-blue-400/30 to-blue-100 dark:from-gray-900 dark:to-blue-900 overflow-hidden">
         {/* Animated Background Shapes */}
         <div className="absolute inset-0 pointer-events-none z-0">
           <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-blue-400/30 rounded-full blur-3xl animate-pulse" />
@@ -33,7 +57,7 @@ export default function SnapSolvePage() {
             <li title="Get step-by-step solutions">Step-by-step solutions <span className="ml-1">🧩</span></li>
             <li title="Works for math, science, and more!">All subjects welcome <span className="ml-1">🌎</span></li>
           </ul>
-          <a href="#tool" className="mt-2 px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full font-bold shadow-lg hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-200 animate-shimmer">Try Now 🚀</a>
+          <TryNowButton />
         </div>
         {/* Tool Launcher + Tool */}
         <div id="tool" className="relative z-10 w-full flex flex-col items-center">

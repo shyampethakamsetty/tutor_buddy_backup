@@ -1,10 +1,10 @@
 module.exports = {
   apps: [
     {
-      name: 'tutorbuddy',
+      name: 'tutorbuddy.co',
       script: 'npm',
       args: 'start',
-      cwd: '/home/tutorbuddy/htdocs/tutorbuddy.co/Tutorbuddy',
+      cwd: '/home/tutorbuddy/htdocs/tutorbuddy.co/tutorbuddy',
       instances: 1,
       autorestart: true,
       watch: false,

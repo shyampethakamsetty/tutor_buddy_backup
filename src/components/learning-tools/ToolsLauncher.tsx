@@ -2,20 +2,33 @@ import React, { useState } from 'react';
 import { useLearningTools } from './LearningToolsProvider';
 import { Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAuthPopup } from '@/hooks/useAuthPopup';
 
 const tools = [
+  { id: 'aiTutorChat', label: 'AI Tutor Chat', icon: '🤖', href: '/ai-tutor-chat' },
   { id: 'doubtBattle', label: 'Doubt Battles', icon: '🥊', href: '/doubt-battle' },
   { id: 'snapSolve', label: 'Snap & Solve', icon: '📷', href: '/snap-solve' },
   { id: 'magicExplain', label: 'Magic Explain', icon: '✨', href: '/magic-explain' },
   { id: 'whatsappDoubt', label: 'Ask in WhatsApp', icon: '💬', href: '/whatsapp-doubt' },
-  { id: 'homeworkHelper', label: 'Homework Helper', icon: '📝', href: '/homework-helper' },
   { id: 'microQuiz', label: 'Micro-Quiz', icon: '❓', href: '/micro-quiz' },
 ];
 
 export const ToolsLauncher = () => {
-  // const { openTool } = useLearningTools(); // Not needed for page navigation
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const { openPopup } = useAuthPopup();
+  
+  // Try to get the learning tools context, but don't fail if it's not available
+  let openTool: ((id: string) => void) | null = null;
+  try {
+    const { openTool: contextOpenTool } = useLearningTools();
+    openTool = contextOpenTool;
+  } catch (error) {
+    // LearningToolsProvider is not available, continue without modal functionality
+    console.log('LearningToolsProvider not available, using navigation-only mode');
+  }
 
   return (
     <>
@@ -56,8 +69,19 @@ export const ToolsLauncher = () => {
               key={tool.id}
               className="flex items-center gap-3 px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition text-left text-base"
               onClick={() => {
+                if (!isAuthenticated) {
+                  setDrawerOpen(false);
+                  openPopup('login');
+                  return;
+                }
                 setDrawerOpen(false);
-                router.push(tool.href);
+                
+                // Handle tools that should open as modals (only AI Tutor Chat for now)
+                if (tool.id === 'aiTutorChat' && openTool) {
+                  openTool(tool.id);
+                } else {
+                  router.push(tool.href);
+                }
               }}
               aria-label={tool.label}
             >
