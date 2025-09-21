@@ -13,7 +13,12 @@ interface Message {
   imageUrl?: string;
 }
 
-export const AITutorChat = () => {
+interface AITutorChatProps {
+  showTitle?: boolean;
+  contextText?: string;
+}
+
+export const AITutorChat = ({ showTitle = true, contextText = '' }: AITutorChatProps) => {
   const { currentTool, closeTool } = useLearningTools();
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -58,6 +63,9 @@ export const AITutorChat = () => {
       }
       if (selectedImage) {
         form.append('image', selectedImage);
+      }
+      if (contextText) {
+        form.append('context', contextText);
       }
 
       const response = await postForm<{ response: string; hasImage: boolean }>('/api/chat', form);
@@ -106,7 +114,7 @@ export const AITutorChat = () => {
   };
 
   return (
-    <Modal open={currentTool === 'aiTutorChat'} onClose={closeTool} title="AI Tutor Chat">
+    <Modal open={currentTool === 'aiTutorChat'} onClose={closeTool} title={showTitle ? "AI Tutor Chat" : undefined}>
       <div className="flex flex-col h-[600px]">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 rounded-t-lg">

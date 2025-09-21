@@ -9,7 +9,12 @@ type WhatsAppDoubtResponse = {
   summary: string;
 };
 
-export const WhatsAppDoubt = () => {
+interface WhatsAppDoubtProps {
+  showTitle?: boolean;
+  contextText?: string;
+}
+
+export const WhatsAppDoubt = ({ showTitle = true, contextText = '' }: WhatsAppDoubtProps) => {
   const { currentTool, closeTool, selectedText, questionId, saveToolResult, getToolResult, onToolUsed } = useLearningTools();
   const [question, setQuestion] = useState(selectedText);
   const [summary, setSummary] = useState('');

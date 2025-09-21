@@ -12,7 +12,12 @@ interface Message {
   imageUrl?: string;
 }
 
-export const SnapSolve = () => {
+interface SnapSolveProps {
+  showTitle?: boolean;
+  contextText?: string;
+}
+
+export const SnapSolve = ({ showTitle = true, contextText = '' }: SnapSolveProps) => {
   const { currentTool, closeTool, saveToolResult, getToolResult, onToolUsed } = useLearningTools();
   const [messages, setMessages] = useState<Message[]>([
     {

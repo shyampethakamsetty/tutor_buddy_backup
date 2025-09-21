@@ -63,7 +63,6 @@ export default function CollapsibleSidebar({ children }: CollapsibleSidebarProps
   // Tools navigation items
   const toolsItems = [
     { name: 'All Learning Tools', href: '/learning-tools', icon: <Target className="h-5 w-5" /> },
-    { name: 'AI Tutor', href: '/ai-tutor', icon: <Brain className="h-5 w-5" /> },
     { name: 'Magic Explain', href: '/magic-explain', icon: <Sparkles className="h-5 w-5" /> },
     { name: 'Micro Quiz', href: '/micro-quiz', icon: <Star className="h-5 w-5" /> },
     { name: 'Doubt Battle', href: '/doubt-battle', icon: <Zap className="h-5 w-5" /> },
@@ -77,15 +76,22 @@ export default function CollapsibleSidebar({ children }: CollapsibleSidebarProps
     if (!isAuthenticated || !user) {
       return [
         { name: 'Home', href: '/', icon: <Home className="h-5 w-5" /> },
+        { name: 'AI Tutor', href: '/ai-tutor', icon: <Brain className="h-5 w-5" /> },
+        { name: 'NCERT Learning', href: '/ncert', icon: <BookOpen className="h-5 w-5" /> },
+        { name: 'Courses', href: '/courses', icon: <BookOpen className="h-5 w-5" /> },
+        { name: 'Tutors', href: '/tutors', icon: <Users className="h-5 w-5" /> },
         { name: 'AI Teaching', href: '/ai-teaching', icon: <Brain className="h-5 w-5" /> },
         { name: 'Offline Meet', href: '/offline-meet', icon: <MapPin className="h-5 w-5" /> },
-        { name: 'Online Teaching', href: '/online-teaching', icon: <Video className="h-5 w-5" /> },
+        { name: 'How It Works', href: '/how-it-works', icon: <Video className="h-5 w-5" /> },
+        { name: 'Contact', href: '/contact', icon: <Mail className="h-5 w-5" /> },
       ];
     }
 
     if (user.role === 'STUDENT') {
       return [
         { name: 'Dashboard', href: '/student/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
+        { name: 'AI Tutor', href: '/ai-tutor', icon: <Brain className="h-5 w-5" /> },
+        { name: 'NCERT Learning', href: '/ncert', icon: <BookOpen className="h-5 w-5" /> },
         { name: 'Profile', href: '/student/profile', icon: <User className="h-5 w-5" /> },
         { name: 'Find Tutors', href: '/student/tutors', icon: <Users className="h-5 w-5" /> },
         { name: 'My Bookings', href: '/student/bookings', icon: <Calendar className="h-5 w-5" /> },
@@ -96,6 +102,8 @@ export default function CollapsibleSidebar({ children }: CollapsibleSidebarProps
     if (user.role === 'TUTOR') {
       return [
         { name: 'Dashboard', href: '/tutor/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
+        { name: 'AI Tutor', href: '/ai-tutor', icon: <Brain className="h-5 w-5" /> },
+        { name: 'NCERT Learning', href: '/ncert', icon: <BookOpen className="h-5 w-5" /> },
         { name: 'Profile', href: '/tutor/profile', icon: <User className="h-5 w-5" /> },
         { name: 'Availability', href: '/tutor/availability', icon: <Clock className="h-5 w-5" /> },
         { name: 'Bookings', href: '/tutor/bookings', icon: <Calendar className="h-5 w-5" /> },
@@ -114,11 +122,12 @@ export default function CollapsibleSidebar({ children }: CollapsibleSidebarProps
       {/* Collapsible Sidebar - Always render but conditionally show */}
       <div className={`bg-card border-r border-border shadow-lg transition-all duration-300 ease-in-out ${
         isCollapsed ? 'w-16' : 'w-64'
-      } ${!isAuthenticated || !user ? 'hidden' : ''}`}>
+      }`}>
         {/* Sidebar Header */}
         <div className="p-4 border-b border-border">
-          {!isCollapsed && (
-                          <div className="flex items-center space-x-3">
+          <div className="flex items-center justify-between">
+            {!isCollapsed && (
+              <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-lg font-bold text-primary-foreground">
                     {isAuthenticated && user ? user.name.charAt(0) : 'T'}
@@ -133,14 +142,30 @@ export default function CollapsibleSidebar({ children }: CollapsibleSidebarProps
                   </p>
                 </div>
               </div>
-          )}
-          {isCollapsed && (
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mx-auto">
-              <span className="text-lg font-bold text-primary-foreground">
-                {isAuthenticated && user ? user.name.charAt(0) : 'T'}
-              </span>
-            </div>
-          )}
+            )}
+            {isCollapsed && (
+              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center mx-auto">
+                <span className="text-lg font-bold text-primary-foreground">
+                  {isAuthenticated && user ? user.name.charAt(0) : 'T'}
+                </span>
+              </div>
+            )}
+            {/* Toggle Button */}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
+              title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              <svg 
+                className={`w-4 h-4 transition-transform ${isCollapsed ? 'rotate-180' : ''}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Navigation Links */}
@@ -257,29 +282,30 @@ export default function CollapsibleSidebar({ children }: CollapsibleSidebarProps
           </div>
         </nav>
 
-        {/* Sidebar Footer - Only show on authenticated pages */}
-        {isAuthenticated && user && (
-          <div className="p-4 border-t border-border space-y-3">
-            {/* Contact */}
-            <button 
-              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
-              title={isCollapsed ? 'Contact' : undefined}
-            >
-              <Mail className="h-4 w-4" />
-              {!isCollapsed && <span>Contact</span>}
-            </button>
-            
-            {/* Toggle Theme */}
-            <button 
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
-              title={isCollapsed ? 'Toggle theme' : undefined}
-            >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              {!isCollapsed && <span>Toggle theme</span>}
-            </button>
-            
-            {/* Logout */}
+        {/* Sidebar Footer */}
+        <div className="p-4 border-t border-border space-y-3">
+          {/* Contact */}
+          <Link
+            href="/contact"
+            className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
+            title={isCollapsed ? 'Contact' : undefined}
+          >
+            <Mail className="h-4 w-4" />
+            {!isCollapsed && <span>Contact</span>}
+          </Link>
+          
+          {/* Toggle Theme */}
+          <button 
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
+            title={isCollapsed ? 'Toggle theme' : undefined}
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {!isCollapsed && <span>Toggle theme</span>}
+          </button>
+          
+          {/* Logout - Only show for authenticated users */}
+          {isAuthenticated && user && (
             <button
               onClick={() => setShowLogoutConfirm(true)}
               className="w-full flex items-center space-x-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
@@ -288,8 +314,8 @@ export default function CollapsibleSidebar({ children }: CollapsibleSidebarProps
               <LogOut className="h-4 w-4" />
               {!isCollapsed && <span>Logout</span>}
             </button>
-          </div>
-        )}
+          )}
+        </div>
         </div>
 
       {/* Main Content */}

@@ -6,6 +6,7 @@ import Chatbot from '@/components/Chatbot'
 import Navbar from '@/components/navbar'
 import { GlobalAuthPopup } from '@/components/GlobalAuthPopup'
 import { SidebarProvider } from '@/contexts/SidebarContext'
+import ConditionalSidebarWrapper from '@/components/ConditionalSidebarWrapper'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,12 +25,14 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen bg-background antialiased`}>
         <Providers>
           <SidebarProvider>
-          <Navbar />
-          <main className="pt-16">
-            {children}
-          </main>
-          <Chatbot />
-          <GlobalAuthPopup />
+            <Navbar />
+            <ConditionalSidebarWrapper>
+              <main className="pt-16">
+                {children}
+              </main>
+            </ConditionalSidebarWrapper>
+            <Chatbot />
+            <GlobalAuthPopup />
           </SidebarProvider>
         </Providers>
       </body>

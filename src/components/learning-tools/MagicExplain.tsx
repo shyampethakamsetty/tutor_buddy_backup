@@ -35,7 +35,12 @@ const SUPPORTED_FILE_TYPES = {
   'text/plain': 'Text'
 };
 
-export const MagicExplain = () => {
+interface MagicExplainProps {
+  showTitle?: boolean;
+  contextText?: string;
+}
+
+export const MagicExplain = ({ showTitle = true, contextText = '' }: MagicExplainProps) => {
   const { currentTool, closeTool, selectedText, userMeta, saveToolResult, getToolResult, onToolUsed, setSelectedText } = useLearningTools();
   const [level, setLevel] = useState<ExplainLevel>(userMeta.classLevel);
   const [text, setText] = useState(selectedText);

@@ -14,7 +14,12 @@ type MicroQuizResponse = {
   questions: MicroQuizQuestion[];
 };
 
-export const MicroQuiz = () => {
+interface MicroQuizProps {
+  showTitle?: boolean;
+  contextText?: string;
+}
+
+export const MicroQuiz = ({ showTitle = true, contextText = '' }: MicroQuizProps) => {
   const { currentTool, closeTool, selectedText, questionId, saveToolResult, getToolResult, onToolUsed } = useLearningTools();
   const [text, setText] = useState(selectedText);
   const [result, setResult] = useState<MicroQuizResponse | null>(null);

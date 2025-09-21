@@ -41,8 +41,13 @@ const subjects: BattleSubject[] = [
   'Custom',
 ];
 
-export const DoubtBattle = () => {
-  const { currentTool, closeTool } = useLearningTools();
+interface DoubtBattleProps {
+  showTitle?: boolean;
+  contextText?: string;
+}
+
+export const DoubtBattle = ({ showTitle = true, contextText = '' }: DoubtBattleProps) => {
+  const { currentTool, closeTool, selectedText, questionId, saveToolResult, getToolResult, onToolUsed } = useLearningTools();
   const [tab, setTab] = useState<'start' | 'join' | 'leaderboard' | 'play'>('start');
   // Start Battle
   const [friend, setFriend] = useState('');
