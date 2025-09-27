@@ -202,7 +202,7 @@ export default function NCERTLearningPage() {
                 onMouseEnter={() => setHoveredClass(classData.classNumber)}
                 onMouseLeave={() => setHoveredClass(null)}
               >
-                <Link href={`/ncert/class-${classData.classNumber}`}>
+                <Link href={`/ncert/class${classData.classNumber}`}>
                   <Card className={`relative overflow-hidden border-0 shadow-xl cursor-pointer transition-all duration-300 bg-gradient-to-br ${classData.gradient} group`}>
                     {/* Animated Background Pattern */}
                     <div className="absolute inset-0 opacity-10">
